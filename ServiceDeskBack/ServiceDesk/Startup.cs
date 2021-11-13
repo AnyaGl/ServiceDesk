@@ -27,6 +27,7 @@ namespace ServiceDesk
             services.AddControllers();
 
             services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
 
             services.AddSwaggerGen(c =>
             {
