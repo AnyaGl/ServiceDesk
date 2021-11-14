@@ -28,6 +28,7 @@ namespace ServiceDesk
 
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
 
             services.AddSwaggerGen(c =>
             {
