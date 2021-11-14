@@ -1,4 +1,4 @@
-﻿using ServiceDesk.Model;
+﻿using ServiceDesk.DTO.Employee;
 using System.Collections.Generic;
 
 namespace ServiceDesk.Cotrollers

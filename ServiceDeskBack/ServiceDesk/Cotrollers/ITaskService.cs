@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ServiceDesk.Model;
+using ServiceDesk.DTO.Task;
 
 namespace ServiceDesk.Cotrollers
 {

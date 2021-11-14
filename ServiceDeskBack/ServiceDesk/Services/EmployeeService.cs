@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using ServiceDesk.Cotrollers;
-using ServiceDesk.Model;
+using ServiceDesk.DTO.Employee;
 
 namespace ServiceDesk.Services
 {
@@ -15,22 +16,42 @@ namespace ServiceDesk.Services
         }
         public Employee GetEmployeeById(int id)
         {
-            var employee = _db.Employees.FirstOrDefault(x => x.Id == id);
+            var employee = _db.Employees.Include(x => x.Department).FirstOrDefault(x => x.Id == id);
             if (employee == null)
             {
                 throw new Exception("Unknown employee id");
             }
-            return employee;
+            return ConvertToEmployeeDTO(employee);
         }
 
         public List<Employee> GetEmployees()
         {
-            return _db.Employees.ToList();
+            return _db.Employees.Include(x => x.Department).ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
         }
 
         public List<Employee> GetEmployeesByDepartmentId(int departmentId)
         {
-            return _db.Employees.Where(e => e.DepartmentId == departmentId).ToList();
+            return _db.Employees.Include(x => x.Department).Where(e => e.Department.Id == departmentId).ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
+        }
+
+        private Employee ConvertToEmployeeDTO(Model.Employee employee)
+        {
+            var employeeDTO = new Employee()
+            {
+                Id = employee.Id,
+                Name = employee.Name
+            };
+
+            if (employee.Department != null)
+            {
+                employeeDTO.Department = new Department()
+                {
+                    Id = employee.Department.Id,
+                    Name = employee.Department.Name
+                };
+            }
+
+            return employeeDTO;
         }
     }
 }
