@@ -1,4 +1,6 @@
-﻿namespace ServiceDesk.Model
+﻿using System;
+
+namespace ServiceDesk.Model
 {
     public enum State
     {
@@ -12,9 +14,11 @@
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string CreatedDate { get; set; }
+        public string FinishDate { get; set; }
         public State State { get; set; }
-        public int AssignedId { get; set; }
-        public int CreatedId { get; set; }
-        public int DepartmentId { get; set; }
+        public Employee Assigned { get; set; }
+        public Employee Created { get; set; }
+        public Department Department { get; set; }
     }
 }
