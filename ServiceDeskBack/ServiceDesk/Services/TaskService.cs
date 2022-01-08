@@ -138,6 +138,11 @@ namespace ServiceDesk.Services
         public void EditTaskState(TaskState taskState)
         {
             var taskModel = _context.Tasks.FirstOrDefault(x => x.Guid == taskState.Guid);
+            if ((Model.State)taskState.State > Model.State.Closed || (Model.State)taskState.State < Model.State.Open)
+            {
+                throw new Exception($"Invalid state");
+            }
+
             if (taskModel != null)
             {
                 taskModel.State = (Model.State)taskState.State;
