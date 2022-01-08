@@ -4,7 +4,7 @@ namespace ServiceDesk.DTO.Department
 {
     public class Department
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public string Name { get; set; }
         public List<Department> Subdepartments { get; set; }
     }

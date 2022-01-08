@@ -4,13 +4,13 @@ namespace ServiceDesk.DTO.DepartmentStructure
 {
     public class Department
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public string Name { get; set; }
     }
 
     public class Employee
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public string Name { get; set; }
     }
 

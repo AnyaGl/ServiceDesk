@@ -21,7 +21,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("get-employees-by-department-id/{departmentId}")]
-        public IActionResult GetEmployeesByDepartmentId(int departmentId)
+        public IActionResult GetEmployeesByDepartmentId(string departmentId)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("get-employee-by-id/{id}")]
-        public IActionResult GetEmployeeById(int id)
+        public IActionResult GetEmployeeById(string id)
         {
             try
             {

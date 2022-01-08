@@ -15,19 +15,19 @@ namespace ServiceDesk.Services
             _db = db;
         }
 
-        public int GetEmployee(Authorization auth)
+        public string GetEmployee(Authorization auth)
         {
             var employee = _db.Employees.FirstOrDefault(x => (x.Login == auth.Login) && (x.Password == auth.Password));
             if (employee == null)
             {
                 throw new Exception("Employee not found");
             }
-            return employee.Id;
+            return employee.Guid;
         }
 
-        public Employee GetEmployeeById(int id)
+        public Employee GetEmployeeById(string id)
         {
-            var employee = _db.Employees.Include(x => x.Department).FirstOrDefault(x => x.Id == id);
+            var employee = _db.Employees.Include(x => x.Department).FirstOrDefault(x => x.Guid == id);
             if (employee == null)
             {
                 throw new Exception("Unknown employee id");
@@ -40,11 +40,11 @@ namespace ServiceDesk.Services
             return _db.Employees.Include(x => x.Department).ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
         }
 
-        public List<Employee> GetEmployeesByDepartmentId(int? departmentId)
+        public List<Employee> GetEmployeesByDepartmentId(string departmentId)
         {
             return _db.Employees.Include(x => x.Department)
                 .Where(e => departmentId != null
-            ? e.Department != null && e.Department.Id == departmentId
+            ? e.Department != null && e.Department.Guid == departmentId
             : e.Department == null)
                 .ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
         }
@@ -53,7 +53,7 @@ namespace ServiceDesk.Services
         {
             var employeeDTO = new Employee()
             {
-                Id = employee.Id,
+                Guid = employee.Guid,
                 Name = employee.Name
             };
 
@@ -61,7 +61,7 @@ namespace ServiceDesk.Services
             {
                 employeeDTO.Department = new Department()
                 {
-                    Id = employee.Department.Id,
+                    Guid = employee.Department.Guid,
                     Name = employee.Department.Name
                 };
             }

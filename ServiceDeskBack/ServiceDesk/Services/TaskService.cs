@@ -18,34 +18,34 @@ namespace ServiceDesk.Services
         {
             return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).ToList().ConvertAll<Task>(ConvertToTaskDTO);
         }
-        public Task GetTaskById(int id)
+        public Task GetTaskById(string id)
         {
-            var task = _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).FirstOrDefault(x => x.Id == id);
+            var task = _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).FirstOrDefault(x => x.Guid == id);
             if (task == null)
             {
                 throw new Exception("Unknown task id");
             }
             return ConvertToTaskDTO(task);
         }
-        public List<Task> GetTasksByAssignedId(int assignedId)
+        public List<Task> GetTasksByAssignedId(string assignedId)
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Assigned.Id == assignedId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Assigned.Guid == assignedId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
         }
-        public List<Task> GetTasksByCreatedId(int createdId)
+        public List<Task> GetTasksByCreatedId(string createdId)
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Created.Id == createdId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Created.Guid == createdId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
         }
 
-        public List<Task> GetTasksByDepartmentId(int departmentId)
+        public List<Task> GetTasksByDepartmentId(string departmentId)
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Department.Id == departmentId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Department.Guid == departmentId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
         }
 
         private Task ConvertToTaskDTO(Model.Task task)
         {
             var result = new Task()
             {
-                Id = task.Id,
+                Guid = task.Guid,
                 Title = task.Title,
                 Description = task.Description,
                 CreatedDate = DateTime.ParseExact(task.CreatedDate, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture),
@@ -53,7 +53,7 @@ namespace ServiceDesk.Services
                 State = (State)task.State,
                 Created = new Employee()
                 {
-                    Id = task.Created.Id,
+                    Guid = task.Created.Guid,
                     Name = task.Created.Name
                 },
             };
@@ -61,7 +61,7 @@ namespace ServiceDesk.Services
             {
                 result.Assigned = new Employee()
                 {
-                    Id = task.Assigned.Id,
+                    Guid = task.Assigned.Guid,
                     Name = task.Assigned.Name
                 };
             }
@@ -69,7 +69,7 @@ namespace ServiceDesk.Services
             {
                 result.Department = new Department()
                 {
-                    Id = task.Department.Id,
+                    Guid = task.Department.Guid,
                     Name = task.Department.Name
                 };
             }
@@ -78,7 +78,7 @@ namespace ServiceDesk.Services
 
         public void EditTask(Task task)
         {
-            var taskModel = _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).FirstOrDefault(x => x.Id == task.Id);
+            var taskModel = _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).FirstOrDefault(x => x.Guid == task.Guid);
             if (taskModel != null)
             {
                 if (task.Title != null)
@@ -93,7 +93,7 @@ namespace ServiceDesk.Services
                 {
                     taskModel.FinishDate = task.FinishDate.ToString("yyyyMMddTHH:mm:ssZ");
                 }
-                var assigned = task.Assigned != null ? _context.Employees.Include(x => x.Department).FirstOrDefault(x => x.Id == task.Assigned.Id) : null;
+                var assigned = task.Assigned != null ? _context.Employees.Include(x => x.Department).FirstOrDefault(x => x.Guid == task.Assigned.Guid) : null;
                 if (assigned != null)
                 {
                     taskModel.Assigned = assigned;
@@ -101,23 +101,24 @@ namespace ServiceDesk.Services
                 }
                 else if (task.Department != null)
                 {
-                    taskModel.Department = _context.Departments.FirstOrDefault(x => x.Id == task.Department.Id);
+                    taskModel.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
                 }
             }
             else
             {
                 var newTask = new Model.Task();
+                newTask.Guid = Guid.NewGuid().ToString();
                 newTask.Title = task.Title != null ? task.Title : "";
                 newTask.Description = task.Description != null ? task.Description : "";
                 newTask.CreatedDate = DateTime.Now.ToString("yyyyMMddTHH:mm:ssZ");
                 newTask.FinishDate = task.FinishDate.ToString("yyyyMMddTHH:mm:ssZ");
                 newTask.State = (Model.State)task.State;
-                newTask.Created = task.Created != null ? _context.Employees.FirstOrDefault(x => x.Id == task.Created.Id) : throw new Exception("Creator must be specified");
+                newTask.Created = task.Created != null ? _context.Employees.FirstOrDefault(x => x.Guid == task.Created.Guid) : throw new Exception("Creator must be specified");
                 if (newTask.Created == null)
                 {
                     throw new Exception("Creator does not exist");
                 }
-                var assigned = task.Assigned != null ? _context.Employees.Include(x => x.Department).FirstOrDefault(x => x.Id == task.Assigned.Id) : null;
+                var assigned = task.Assigned != null ? _context.Employees.Include(x => x.Department).FirstOrDefault(x => x.Guid == task.Assigned.Guid) : null;
                 if (assigned != null)
                 {
                     newTask.Assigned = assigned;
@@ -125,7 +126,7 @@ namespace ServiceDesk.Services
                 }
                 else if(task.Department != null)
                 {
-                    newTask.Department = _context.Departments.FirstOrDefault(x => x.Id == task.Department.Id);
+                    newTask.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
                 }
                 _context.Add(newTask);
             }
@@ -134,14 +135,14 @@ namespace ServiceDesk.Services
 
         public void EditTaskState(TaskState taskState)
         {
-            var taskModel = _context.Tasks.FirstOrDefault(x => x.Id == taskState.Id);
+            var taskModel = _context.Tasks.FirstOrDefault(x => x.Guid == taskState.Guid);
             if (taskModel != null)
             {
                 taskModel.State = (Model.State)taskState.State;
             }
             else
             {
-                throw new Exception($"Task with id={taskState.Id} does not exist");
+                throw new Exception($"Task with id={taskState.Guid} does not exist");
             }
             _context.SaveChanges();
         }

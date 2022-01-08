@@ -18,7 +18,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("structure")]
-        public IActionResult GetStructure(int? departmentId)
+        public IActionResult GetStructure(string departmentId)
         {
             var departments = _departmentService.GetDepartmentsByMain(departmentId);
             var employees = _employeeService.GetEmployeesByDepartmentId(departmentId);
@@ -32,7 +32,7 @@ namespace ServiceDesk.Cotrollers
             {
                 result.Departments.Add(new Department
                 {
-                    Id = d.Id,
+                    Guid = d.Guid,
                     Name = d.Name
                 });
             }
@@ -41,7 +41,7 @@ namespace ServiceDesk.Cotrollers
             {
                 result.Employees.Add(new Employee
                 {
-                    Id = e.Id,
+                    Guid = e.Guid,
                     Name = e.Name
                 });
             }

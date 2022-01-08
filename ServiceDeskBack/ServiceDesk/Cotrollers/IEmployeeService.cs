@@ -6,8 +6,8 @@ namespace ServiceDesk.Cotrollers
     public interface IEmployeeService
     {
         public List<Employee> GetEmployees();
-        public List<Employee> GetEmployeesByDepartmentId(int? departmentId);
-        public Employee GetEmployeeById(int id);
-        public int GetEmployee(Authorization auth);
+        public List<Employee> GetEmployeesByDepartmentId(string departmentId);
+        public Employee GetEmployeeById(string id);
+        public string GetEmployee(Authorization auth);
     }
 }

@@ -6,6 +6,6 @@ namespace ServiceDesk.Cotrollers
     public interface IDepartmentService
     {
         public List<Department> GetDepartmentsHierarchy();
-        public List<Department> GetDepartmentsByMain(int? mainId);
+        public List<Department> GetDepartmentsByMain(string mainId);
     }
 }

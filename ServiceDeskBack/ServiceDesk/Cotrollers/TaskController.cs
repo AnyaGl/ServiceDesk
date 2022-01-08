@@ -21,7 +21,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("get-task-by-id/{id}")]
-        public IActionResult GetTaskById(int id)
+        public IActionResult GetTaskById(string id)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace ServiceDesk.Cotrollers
         }      
         
         [HttpGet("get-tasks-by-assigned-id/{assignedId}")]
-        public IActionResult GetTasksByAssignedId(int assignedId)
+        public IActionResult GetTasksByAssignedId(string assignedId)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("get-tasks-by-created-id/{createdId}")]
-        public IActionResult GetTasksByCretedId(int createdId)
+        public IActionResult GetTasksByCretedId(string createdId)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("get-tasks-by-department-id/{departmentId}")]
-        public IActionResult GetTasksByDepartmentId(int departmentId)
+        public IActionResult GetTasksByDepartmentId(string departmentId)
         {
             try
             {

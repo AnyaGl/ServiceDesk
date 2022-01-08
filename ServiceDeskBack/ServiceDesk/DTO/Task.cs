@@ -10,21 +10,21 @@ namespace ServiceDesk.DTO.Task
         Closed
     }
 
-    public class Employee 
+    public class Employee
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public string Name { get; set; }
     }
     
     public class Department
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public string Name { get; set; }
     }
 
     public class Task
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -37,7 +37,7 @@ namespace ServiceDesk.DTO.Task
 
     public class TaskState
     {
-        public int Id { get; set; }
+        public string Guid { get; set; }
         public State State { get; set; }
     }
 }

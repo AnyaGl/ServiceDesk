@@ -14,19 +14,19 @@ namespace ServiceDesk.Services
             _db = db;
         }
 
-        public List<Department> GetDepartmentsByMain(int? mainId)
+        public List<Department> GetDepartmentsByMain(string mainId)
         {
             List<Department> result = new List<Department>();
             var departments = _db.Departments.Include(x => x.MainDepartment).ToList();
             foreach (var department in departments)
             {
                 if (mainId != null
-                    ? department.MainDepartment != null && department.MainDepartment.Id == mainId
+                    ? department.MainDepartment != null && department.MainDepartment.Guid == mainId
                     : department.MainDepartment == null)
                 {
                     result.Add(new Department
                     {
-                        Id = department.Id,
+                        Guid = department.Guid,
                         Name = department.Name
                     });
                 }
@@ -56,7 +56,7 @@ namespace ServiceDesk.Services
         {
             return new Department()
             {
-                Id = department.Id,
+                Guid = department.Guid,
                 Name = department.Name,
                 Subdepartments = CreateDepartments(department.Id, departments, ref processedDepartments)
             };

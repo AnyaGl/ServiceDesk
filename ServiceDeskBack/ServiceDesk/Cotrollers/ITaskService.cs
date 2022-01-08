@@ -6,10 +6,10 @@ namespace ServiceDesk.Cotrollers
     public interface ITaskService
     {
         public List<Task> GetTasks();
-        public Task GetTaskById(int id);
-        public List<Task> GetTasksByAssignedId(int assignedId);
-        public List<Task> GetTasksByCreatedId(int createdId);
-        public List<Task> GetTasksByDepartmentId(int departmentId);
+        public Task GetTaskById(string id);
+        public List<Task> GetTasksByAssignedId(string assignedId);
+        public List<Task> GetTasksByCreatedId(string createdId);
+        public List<Task> GetTasksByDepartmentId(string departmentId);
         public void EditTask(Task task);
         public void EditTaskState(TaskState taskState);
     }
