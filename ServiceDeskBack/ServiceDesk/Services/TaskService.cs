@@ -102,6 +102,7 @@ namespace ServiceDesk.Services
                 else if (task.Department != null)
                 {
                     taskModel.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
+                    taskModel.Assigned = null;
                 }
             }
             else
@@ -127,6 +128,7 @@ namespace ServiceDesk.Services
                 else if(task.Department != null)
                 {
                     newTask.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
+                    taskModel.Assigned = null;
                 }
                 _context.Add(newTask);
             }
