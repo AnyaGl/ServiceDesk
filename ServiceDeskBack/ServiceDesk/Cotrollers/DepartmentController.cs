@@ -12,7 +12,7 @@ namespace ServiceDesk.Cotrollers
             _departmentService = departmentService;
         }
 
-        [HttpGet("get-departments-hierarchy")]
+        [HttpGet("hierarchy")]
         public IActionResult GetDepartmentsHierarchy()
         {
             return Ok(_departmentService.GetDepartmentsHierarchy());

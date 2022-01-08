@@ -14,13 +14,13 @@ namespace ServiceDesk.Cotrollers
             _taskService = taskService;
         }
 
-        [HttpGet("get-tasks")]
+        [HttpGet("all")]
         public IActionResult GetTasks()
         {
             return Ok(_taskService.GetTasks());
         }
 
-        [HttpGet("get-task-by-id/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetTaskById(string id)
         {
             try
@@ -34,7 +34,7 @@ namespace ServiceDesk.Cotrollers
             }
         }      
         
-        [HttpGet("get-tasks-by-assigned-id/{assignedId}")]
+        [HttpGet("assigned/{assignedId}")]
         public IActionResult GetTasksByAssignedId(string assignedId)
         {
             try
@@ -48,7 +48,7 @@ namespace ServiceDesk.Cotrollers
             }
         }
 
-        [HttpGet("get-tasks-by-created-id/{createdId}")]
+        [HttpGet("creator/{createdId}")]
         public IActionResult GetTasksByCretedId(string createdId)
         {
             try
@@ -62,7 +62,7 @@ namespace ServiceDesk.Cotrollers
             }
         }
 
-        [HttpGet("get-tasks-by-department-id/{departmentId}")]
+        [HttpGet("department/{departmentId}")]
         public IActionResult GetTasksByDepartmentId(string departmentId)
         {
             try
@@ -90,7 +90,7 @@ namespace ServiceDesk.Cotrollers
             }
         }
 
-        [HttpPost()]
+        [HttpPost("state")]
         public IActionResult EditTaskState(TaskState taskState)
         {
             try

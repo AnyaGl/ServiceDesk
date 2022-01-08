@@ -14,13 +14,13 @@ namespace ServiceDesk.Cotrollers
             _employeeService = employeeService;
         }
 
-        [HttpGet("get-employees")]
+        [HttpGet("all")]
         public IActionResult GetEmployees()
         {
             return Ok(_employeeService.GetEmployees());
         }
 
-        [HttpGet("get-employees-by-department-id/{departmentId}")]
+        [HttpGet("department/{departmentId}")]
         public IActionResult GetEmployeesByDepartmentId(string departmentId)
         {
             try
@@ -33,7 +33,7 @@ namespace ServiceDesk.Cotrollers
             }
         }
 
-        [HttpGet("get-employee-by-id/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetEmployeeById(string id)
         {
             try
