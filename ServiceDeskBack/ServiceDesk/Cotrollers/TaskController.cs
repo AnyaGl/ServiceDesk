@@ -77,7 +77,7 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpPost()]
-        public IActionResult AddObject(TaskState taskState)
+        public IActionResult EditTaskState(TaskState taskState)
         {
             try
             {
