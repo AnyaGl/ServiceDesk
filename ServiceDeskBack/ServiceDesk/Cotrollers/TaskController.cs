@@ -75,5 +75,19 @@ namespace ServiceDesk.Cotrollers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpPost()]
+        public IActionResult AddObject(TaskState taskState)
+        {
+            try
+            {
+                _taskService.EditTaskState(taskState);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

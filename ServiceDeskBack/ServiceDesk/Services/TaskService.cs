@@ -126,5 +126,19 @@ namespace ServiceDesk.Services
             }
             _context.SaveChanges();
         }
+
+        public void EditTaskState(TaskState taskState)
+        {
+            var taskModel = _context.Tasks.FirstOrDefault(x => x.Id == taskState.Id);
+            if (taskModel != null)
+            {
+                taskModel.State = (Model.State)taskState.State;
+            }
+            else
+            {
+                throw new Exception($"Task with id={taskState.Id} does not exist");
+            }
+            _context.SaveChanges();
+        }
     }
 }

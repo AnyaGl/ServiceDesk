@@ -10,5 +10,6 @@ namespace ServiceDesk.Cotrollers
         public List<Task> GetTasksByAssignedId(int assignedId);
         public List<Task> GetTasksByCreatedId(int createdId);
         public void EditTask(Task task);
+        public void EditTaskState(TaskState taskState);
     }
 }

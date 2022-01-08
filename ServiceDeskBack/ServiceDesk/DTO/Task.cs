@@ -34,4 +34,10 @@ namespace ServiceDesk.DTO.Task
         public Employee Created { get; set; }
         public Department Department { get; set; }
     }
+
+    public class TaskState
+    {
+        public int Id { get; set; }
+        public State State { get; set; }
+    }
 }
