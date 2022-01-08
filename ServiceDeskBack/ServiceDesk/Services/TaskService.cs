@@ -36,6 +36,11 @@ namespace ServiceDesk.Services
             return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Created.Id == createdId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
         }
 
+        public List<Task> GetTasksByDepartmentId(int departmentId)
+        {
+            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Department.Id == departmentId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+        }
+
         private Task ConvertToTaskDTO(Model.Task task)
         {
             var result = new Task()

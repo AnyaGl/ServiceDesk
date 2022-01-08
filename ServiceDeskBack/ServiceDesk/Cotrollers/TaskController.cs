@@ -62,6 +62,20 @@ namespace ServiceDesk.Cotrollers
             }
         }
 
+        [HttpGet("get-tasks-by-department-id/{departmentId}")]
+        public IActionResult GetTasksByDepartmentId(int departmentId)
+        {
+            try
+            {
+                var tasks = _taskService.GetTasksByDepartmentId(departmentId);
+                return Ok(tasks);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPost("add")]
         public IActionResult AddObject(Task task)
         {

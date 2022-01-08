@@ -9,6 +9,7 @@ namespace ServiceDesk.Cotrollers
         public Task GetTaskById(int id);
         public List<Task> GetTasksByAssignedId(int assignedId);
         public List<Task> GetTasksByCreatedId(int createdId);
+        public List<Task> GetTasksByDepartmentId(int departmentId);
         public void EditTask(Task task);
         public void EditTaskState(TaskState taskState);
     }
