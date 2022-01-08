@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ServiceDesk.DTO.Task;
 using System;
 
 namespace ServiceDesk.Cotrollers
@@ -54,6 +55,20 @@ namespace ServiceDesk.Cotrollers
             {
                 var tasks = _taskService.GetTasksByCreatedId(createdId);
                 return Ok(tasks);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("add")]
+        public IActionResult AddObject(Task task)
+        {
+            try
+            {
+                _taskService.EditTask(task);
+                return Ok();
             }
             catch (Exception e)
             {
