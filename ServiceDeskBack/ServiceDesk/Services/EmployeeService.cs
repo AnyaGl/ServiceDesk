@@ -40,9 +40,13 @@ namespace ServiceDesk.Services
             return _db.Employees.Include(x => x.Department).ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
         }
 
-        public List<Employee> GetEmployeesByDepartmentId(int departmentId)
+        public List<Employee> GetEmployeesByDepartmentId(int? departmentId)
         {
-            return _db.Employees.Include(x => x.Department).Where(e => e.Department.Id == departmentId).ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
+            return _db.Employees.Include(x => x.Department)
+                .Where(e => departmentId != null
+            ? e.Department != null && e.Department.Id == departmentId
+            : e.Department == null)
+                .ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
         }
 
         private Employee ConvertToEmployeeDTO(Model.Employee employee)

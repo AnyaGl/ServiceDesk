@@ -13,6 +13,27 @@ namespace ServiceDesk.Services
         {
             _db = db;
         }
+
+        public List<Department> GetDepartmentsByMain(int? mainId)
+        {
+            List<Department> result = new List<Department>();
+            var departments = _db.Departments.Include(x => x.MainDepartment).ToList();
+            foreach (var department in departments)
+            {
+                if (mainId != null
+                    ? department.MainDepartment != null && department.MainDepartment.Id == mainId
+                    : department.MainDepartment == null)
+                {
+                    result.Add(new Department
+                    {
+                        Id = department.Id,
+                        Name = department.Name
+                    });
+                }
+            }
+            return result;
+        }
+
         public List<Department> GetDepartmentsHierarchy()
         {
             var departments = _db.Departments.Include(x => x.MainDepartment).ToList();
