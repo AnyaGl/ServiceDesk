@@ -51,12 +51,26 @@ namespace ServiceDesk.Cotrollers
         {
             try
             {
-                return Ok(_employeeService.GetEmployee(auth));
+                return Ok(new Result
+                {
+                    ErrorCode = 0,
+                    Guid = _employeeService.GetEmployee(auth)
+                });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return Ok(new Result
+                {
+                    ErrorCode = 1,
+                    Guid = ""
+                });
             }
         }
+    }
+
+    public class Result
+    {
+        public int ErrorCode { get; set; }
+        public string Guid { get; set; }
     }
 }

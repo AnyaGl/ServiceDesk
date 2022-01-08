@@ -32,8 +32,8 @@ namespace ServiceDesk.Cotrollers
             {
                 return BadRequest(e.Message);
             }
-        }      
-        
+        }
+
         [HttpGet("assigned/{assignedId}")]
         public IActionResult GetTasksByAssignedId(string assignedId)
         {
@@ -82,13 +82,20 @@ namespace ServiceDesk.Cotrollers
             try
             {
                 _taskService.EditTask(task);
-                return Ok();
+                return Ok(new TaskResult
+                {
+                    ErrorCode = 0
+                });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return Ok(new TaskResult
+                {
+                    ErrorCode = 1
+                });
             }
         }
+
 
         [HttpPost("state")]
         public IActionResult EditTaskState(TaskState taskState)
@@ -96,12 +103,22 @@ namespace ServiceDesk.Cotrollers
             try
             {
                 _taskService.EditTaskState(taskState);
-                return Ok();
+                return Ok(new TaskResult
+                {
+                    ErrorCode = 0
+                });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return Ok(new TaskResult
+                {
+                    ErrorCode = 1
+                });
             }
         }
+    }
+    public class TaskResult
+    {
+        public int ErrorCode { get; set; }
     }
 }
