@@ -14,6 +14,17 @@ namespace ServiceDesk.Services
         {
             _db = db;
         }
+
+        public int GetEmployee(Authorization auth)
+        {
+            var employee = _db.Employees.FirstOrDefault(x => (x.Login == auth.Login) && (x.Password == auth.Password));
+            if (employee == null)
+            {
+                throw new Exception("Employee not found");
+            }
+            return employee.Id;
+        }
+
         public Employee GetEmployeeById(int id)
         {
             var employee = _db.Employees.Include(x => x.Department).FirstOrDefault(x => x.Id == id);

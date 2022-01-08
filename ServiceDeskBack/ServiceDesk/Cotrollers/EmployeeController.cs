@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ServiceDesk.DTO.Employee;
 using System;
 
 namespace ServiceDesk.Cotrollers
@@ -38,6 +39,19 @@ namespace ServiceDesk.Cotrollers
             try
             {
                 return Ok(_employeeService.GetEmployeeById(id));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("auth")]
+        public IActionResult GetEmployee(Authorization auth)
+        {
+            try
+            {
+                return Ok(_employeeService.GetEmployee(auth));
             }
             catch (Exception e)
             {

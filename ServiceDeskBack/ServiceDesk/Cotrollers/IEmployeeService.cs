@@ -8,5 +8,6 @@ namespace ServiceDesk.Cotrollers
         public List<Employee> GetEmployees();
         public List<Employee> GetEmployeesByDepartmentId(int departmentId);
         public Employee GetEmployeeById(int id);
+        public int GetEmployee(Authorization auth);
     }
 }
