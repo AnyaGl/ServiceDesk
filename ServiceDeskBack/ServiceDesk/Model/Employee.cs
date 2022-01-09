@@ -8,5 +8,6 @@
         public string Login { get; set; }
         public string Password { get; set; }
         public Department Department { get; set; }
+        public string PhotoPath { get; set; }
     }
 }

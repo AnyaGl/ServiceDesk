@@ -7,6 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using ServiceDesk.Services;
 using ServiceDesk.Cotrollers;
+using Microsoft.AspNetCore.StaticFiles;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
 
 namespace ServiceDesk
 {
@@ -57,6 +61,24 @@ namespace ServiceDesk
             });
 
             app.UseHttpsRedirection();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            var path = Path.Combine(env.ContentRootPath, "images");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var provider = new FileExtensionContentTypeProvider();
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(path),
+                RequestPath = new PathString("/images"),
+                ContentTypeProvider = provider
+            });
 
             app.UseRouting();
             app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

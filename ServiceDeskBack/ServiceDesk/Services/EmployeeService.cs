@@ -54,7 +54,8 @@ namespace ServiceDesk.Services
             var employeeDTO = new Employee()
             {
                 Guid = employee.Guid,
-                Name = employee.Name
+                Name = employee.Name,
+                PhotoPath = employee.PhotoPath
             };
 
             if (employee.Department != null)
