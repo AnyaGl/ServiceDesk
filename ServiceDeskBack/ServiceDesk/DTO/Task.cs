@@ -14,6 +14,7 @@ namespace ServiceDesk.DTO.Task
     {
         public string Guid { get; set; }
         public string Name { get; set; }
+        public string PhotoPath { get; set; }
     }
     
     public class Department

@@ -10,6 +10,7 @@ namespace ServiceDesk.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly DBContext _db;
+        private readonly string _baseUrl = "http://servicedesk01-001-site1.dtempurl.com/";
         public EmployeeService(DBContext db)
         {
             _db = db;
@@ -55,7 +56,7 @@ namespace ServiceDesk.Services
             {
                 Guid = employee.Guid,
                 Name = employee.Name,
-                PhotoPath = employee.PhotoPath
+                PhotoPath = _baseUrl + employee.PhotoPath
             };
 
             if (employee.Department != null)

@@ -10,6 +10,7 @@ namespace ServiceDesk.Services
     public class TaskService : ITaskService
     {
         private readonly DBContext _context;
+        private readonly string _baseUrl = "http://servicedesk01-001-site1.dtempurl.com/";
         public TaskService(DBContext context)
         {
             _context = context;
@@ -54,7 +55,8 @@ namespace ServiceDesk.Services
                 Created = new Employee()
                 {
                     Guid = task.Created.Guid,
-                    Name = task.Created.Name
+                    Name = task.Created.Name,
+                    PhotoPath = _baseUrl + task.Created.PhotoPath
                 },
             };
             if (task.Assigned != null)
@@ -62,7 +64,8 @@ namespace ServiceDesk.Services
                 result.Assigned = new Employee()
                 {
                     Guid = task.Assigned.Guid,
-                    Name = task.Assigned.Name
+                    Name = task.Assigned.Name,
+                    PhotoPath = _baseUrl + task.Assigned.PhotoPath
                 };
             }
             if (task.Department != null)

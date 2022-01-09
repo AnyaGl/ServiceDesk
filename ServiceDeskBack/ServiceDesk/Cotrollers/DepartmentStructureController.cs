@@ -42,7 +42,8 @@ namespace ServiceDesk.Cotrollers
                 result.Employees.Add(new Employee
                 {
                     Guid = e.Guid,
-                    Name = e.Name
+                    Name = e.Name,
+                    PhotoPath = e.PhotoPath
                 });
             }
             return Ok(result);

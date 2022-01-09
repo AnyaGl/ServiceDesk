@@ -12,6 +12,7 @@ namespace ServiceDesk.DTO.DepartmentStructure
     {
         public string Guid { get; set; }
         public string Name { get; set; }
+        public string PhotoPath { get; set; }
     }
 
     public class DepartmentStructure
