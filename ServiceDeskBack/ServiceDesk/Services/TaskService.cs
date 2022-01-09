@@ -104,6 +104,7 @@ namespace ServiceDesk.Services
                     taskModel.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
                     taskModel.Assigned = null;
                 }
+                ValidateAssigned(taskModel);
             }
             else
             {
@@ -128,11 +129,20 @@ namespace ServiceDesk.Services
                 else if(task.Department != null)
                 {
                     newTask.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
-                    taskModel.Assigned = null;
+                    newTask.Assigned = null;
                 }
+                ValidateAssigned(newTask);
                 _context.Add(newTask);
             }
             _context.SaveChanges();
+        }
+
+        private void ValidateAssigned(Model.Task task)
+        {
+            if (task.Department == null && task.Assigned == null)
+            {
+                throw new Exception("Department or assigned must be specified");
+            }
         }
 
         public void EditTaskState(TaskState taskState)
