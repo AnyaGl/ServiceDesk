@@ -161,7 +161,7 @@ namespace ServiceDesk.Services
                     if (assigned != null)
                     {
                         newTask.AssignedId = assigned.guid;
-                        newTask.DepartmentId = assigned.department.guid;
+                        newTask.DepartmentId = assigned.department != null ? assigned.department.guid : null;
                     }
                 }
                 else if(task.Department != null)
