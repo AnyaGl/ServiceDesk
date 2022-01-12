@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.DTO.Task;
 using System;
+using System.Linq;
 
 namespace ServiceDesk.Cotrollers
 {
@@ -15,17 +16,17 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("all")]
-        public IActionResult GetTasks()
+        public async System.Threading.Tasks.Task<IActionResult> GetTasksAsync()
         {
-            return Ok(_taskService.GetTasks());
+            return Ok(await _taskService.GetTasksAsync());
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTaskById(string id)
+        public async System.Threading.Tasks.Task<IActionResult> GetTaskByIdAsync(string id)
         {
             try
             {
-                var task = _taskService.GetTaskById(id);
+                var task = await _taskService.GetTaskByIdAsync(id);
                 return Ok(task);
             }
             catch (Exception e)
@@ -35,11 +36,11 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("assigned/{assignedId}")]
-        public IActionResult GetTasksByAssignedId(string assignedId)
+        public async System.Threading.Tasks.Task<IActionResult> GetTasksByAssignedIdAsync(string assignedId)
         {
             try
             {
-                var tasks = _taskService.GetTasksByAssignedId(assignedId);
+                var tasks = await _taskService.GetTasksByAssignedIdAsync(assignedId);
                 return Ok(tasks);
             }
             catch (Exception e)
@@ -49,11 +50,11 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("creator/{createdId}")]
-        public IActionResult GetTasksByCretedId(string createdId)
+        public async System.Threading.Tasks.Task<IActionResult> GetTasksByCretedIdAsync(string createdId)
         {
             try
             {
-                var tasks = _taskService.GetTasksByCreatedId(createdId);
+                var tasks = await _taskService.GetTasksByCreatedIdAsync(createdId);
                 return Ok(tasks);
             }
             catch (Exception e)
@@ -63,11 +64,11 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("department/{departmentId}")]
-        public IActionResult GetTasksByDepartmentId(string departmentId)
+        public async System.Threading.Tasks.Task<IActionResult> GetTasksByDepartmentIdAsync(string departmentId)
         {
             try
             {
-                var tasks = _taskService.GetTasksByDepartmentId(departmentId);
+                var tasks = await _taskService.GetTasksByDepartmentIdAsync(departmentId);
                 return Ok(tasks);
             }
             catch (Exception e)
@@ -77,11 +78,11 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpPost("add")]
-        public IActionResult AddObject(Task task)
+        public async System.Threading.Tasks.Task<IActionResult> AddObjectAsync(Task task)
         {
             try
             {
-                _taskService.EditTask(task);
+                await _taskService.EditTaskAsync(task);
                 return Ok(new TaskResult
                 {
                     ErrorCode = 0

@@ -1,14 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ServiceDesk.Services;
-using ServiceDesk.Cotrollers;
+using OfficeStructureService.Cotrollers;
+using OfficeStructureService.Services;
+using System.IO;
 
-namespace ServiceDesk
+namespace OfficeStructureService
 {
     public class Startup
     {
@@ -26,7 +30,6 @@ namespace ServiceDesk
                 builder.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
 
-            services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
 
@@ -34,7 +37,7 @@ namespace ServiceDesk
             {
                 c.SwaggerDoc("api", new OpenApiInfo()
                 {
-                    Title = "serviceDesk",
+                    Title = "officeStructure",
                     Version = "1.0"
                 });
             });
@@ -52,13 +55,29 @@ namespace ServiceDesk
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/api/swagger.json", "serviceDesk 1.0");
+                c.SwaggerEndpoint("/swagger/api/swagger.json", "officeStructure 1.0");
                 c.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            var path = Path.Combine(env.ContentRootPath, "images");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var provider = new FileExtensionContentTypeProvider();
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(path),
+                RequestPath = new PathString("/images"),
+                ContentTypeProvider = provider
+            });
 
             app.UseRouting();
             app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

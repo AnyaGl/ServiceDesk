@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ServiceDesk.Model;
+using OfficeStructureService.Model;
 
-namespace ServiceDesk
+namespace OfficeStructureService
 {
     public class DBContext : DbContext
     {
@@ -9,6 +9,7 @@ namespace ServiceDesk
         {
             Database.EnsureCreated();
         }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Department> Departments { get; set; }
     }
 }

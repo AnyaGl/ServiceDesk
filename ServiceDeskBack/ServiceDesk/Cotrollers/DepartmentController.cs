@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ServiceDesk.Cotrollers
 {
@@ -13,9 +14,9 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("hierarchy")]
-        public IActionResult GetDepartmentsHierarchy()
+        public async Task<IActionResult> GetDepartmentsHierarchyAsync()
         {
-            return Ok(_departmentService.GetDepartmentsHierarchy());
+            return Ok(await _departmentService.GetDepartmentsHierarchy());
         }
     }
 }

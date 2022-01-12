@@ -1,4 +1,4 @@
-﻿namespace ServiceDesk.Model
+﻿namespace OfficeStructureService.Model
 {
     public class Department
     {

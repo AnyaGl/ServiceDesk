@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using ServiceDesk.Cotrollers;
 using ServiceDesk.DTO.Employee;
 
@@ -9,66 +11,73 @@ namespace ServiceDesk.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly DBContext _db;
-        private readonly string _baseUrl = "http://servicedesk01-001-site1.dtempurl.com/";
-        public EmployeeService(DBContext db)
-        {
-            _db = db;
-        }
+        private readonly string _baseUrl = "http://officestructure-001-site1.ctempurl.com/api/Employee/";
 
-        public string GetEmployee(Authorization auth)
+        public async Task<AuthResult> GetEmployee(Authorization auth)
         {
-            var employee = _db.Employees.FirstOrDefault(x => (x.Login == auth.Login) && (x.Password == auth.Password));
-            if (employee == null)
+            var str = JsonSerializer.Serialize(auth);
+            var httpContent = new StringContent(str, Encoding.UTF8, "application/json");
+
+            using (var httpClient = new HttpClient())
             {
-                throw new Exception("Employee not found");
-            }
-            return employee.Guid;
-        }
-
-        public Employee GetEmployeeById(string id)
-        {
-            var employee = _db.Employees.Include(x => x.Department).FirstOrDefault(x => x.Guid == id);
-            if (employee == null)
-            {
-                throw new Exception("Unknown employee id");
-            }
-            return ConvertToEmployeeDTO(employee);
-        }
-
-        public List<Employee> GetEmployees()
-        {
-            return _db.Employees.Include(x => x.Department).ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
-        }
-
-        public List<Employee> GetEmployeesByDepartmentId(string departmentId)
-        {
-            return _db.Employees.Include(x => x.Department)
-                .Where(e => departmentId != null
-            ? e.Department != null && e.Department.Guid == departmentId
-            : e.Department == null)
-                .ToList().ConvertAll<Employee>(ConvertToEmployeeDTO);
-        }
-
-        private Employee ConvertToEmployeeDTO(Model.Employee employee)
-        {
-            var employeeDTO = new Employee()
-            {
-                Guid = employee.Guid,
-                Name = employee.Name,
-                PhotoPath = _baseUrl + employee.PhotoPath
-            };
-
-            if (employee.Department != null)
-            {
-                employeeDTO.Department = new Department()
+                try
                 {
-                    Guid = employee.Department.Guid,
-                    Name = employee.Department.Name
-                };
+                    var httpResponse = await httpClient.PostAsync($"{_baseUrl}auth", httpContent);
+                    return JsonSerializer.Deserialize<AuthResult>(await httpResponse.Content.ReadAsStringAsync());
+                }
+                catch (Exception)
+                {
+                    return new AuthResult
+                    {
+                        errorCode = 1,
+                        guid = ""
+                    };
+                }
             }
+        }
 
-            return employeeDTO;
+        public async Task<Employee> GetEmployeeById(string id)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var httpResponse = await httpClient.GetAsync($"{_baseUrl}{id}");
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var str = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    return JsonSerializer.Deserialize<Employee>(str);
+                }
+                return null;
+            }
+        }
+
+        public async Task<List<Employee>> GetEmployees()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var httpResponse = await httpClient.GetAsync($"{_baseUrl}all");
+                var str = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonSerializer.Deserialize<List<Employee>>(str);
+            }
+        }
+
+        public async Task<List<Employee>> GetEmployeesByDepartmentId(string departmentId)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var httpResponse = await httpClient.GetAsync($"{_baseUrl}department/{departmentId}");
+                var str = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonSerializer.Deserialize<List<Employee>>(str);
+            }
+        }
+
+        public async Task<bool> IsEmployeeExist(string id)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var httpResponse = await httpClient.GetAsync($"{_baseUrl}isexist/{id}");
+                var str = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonSerializer.Deserialize<bool>(str);
+            }
         }
     }
 }

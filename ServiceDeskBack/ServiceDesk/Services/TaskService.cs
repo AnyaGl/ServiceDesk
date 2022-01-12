@@ -10,39 +10,54 @@ namespace ServiceDesk.Services
     public class TaskService : ITaskService
     {
         private readonly DBContext _context;
-        private readonly string _baseUrl = "http://servicedesk01-001-site1.dtempurl.com/";
-        public TaskService(DBContext context)
+        private readonly IEmployeeService _employeeService;
+        private readonly IDepartmentService _departmentService;
+        public TaskService(DBContext context, IEmployeeService employeeService, IDepartmentService departmentService)
         {
             _context = context;
+            _employeeService = employeeService;
+            _departmentService = departmentService;
         }
-        public List<Task> GetTasks()
+        public async System.Threading.Tasks.Task<List<Task>> GetTasksAsync()
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return await ConvertToTasksDTOAsync(_context.Tasks.ToList());
         }
-        public Task GetTaskById(string id)
+
+
+        public async System.Threading.Tasks.Task<Task> GetTaskByIdAsync(string id)
         {
-            var task = _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).FirstOrDefault(x => x.Guid == id);
+            var task = _context.Tasks.FirstOrDefault(x => x.Guid == id);
             if (task == null)
             {
                 throw new Exception("Unknown task id");
             }
-            return ConvertToTaskDTO(task);
+            return await ConvertToTaskDTOAsync(task);
         }
-        public List<Task> GetTasksByAssignedId(string assignedId)
+        public async System.Threading.Tasks.Task<List<Task>> GetTasksByAssignedIdAsync(string assignedId)
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Assigned.Guid == assignedId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return await ConvertToTasksDTOAsync(_context.Tasks.Where(e => e.AssignedId == assignedId).ToList());
         }
-        public List<Task> GetTasksByCreatedId(string createdId)
+        public async System.Threading.Tasks.Task<List<Task>> GetTasksByCreatedIdAsync(string createdId)
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Created.Guid == createdId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return await ConvertToTasksDTOAsync(_context.Tasks.Where(e => e.CreatedId == createdId).ToList());
         }
 
-        public List<Task> GetTasksByDepartmentId(string departmentId)
+        public async System.Threading.Tasks.Task<List<Task>> GetTasksByDepartmentIdAsync(string departmentId)
         {
-            return _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).Where(e => e.Department.Guid == departmentId).ToList().ConvertAll<Task>(ConvertToTaskDTO);
+            return await ConvertToTasksDTOAsync(_context.Tasks.Where(e => e.DepartmentId == departmentId).ToList());
         }
 
-        private Task ConvertToTaskDTO(Model.Task task)
+        private async System.Threading.Tasks.Task<List<Task>> ConvertToTasksDTOAsync(List<Model.Task> tasks)
+        {
+            List<Task> result = new List<Task>();
+            foreach (var task in tasks)
+            {
+                result.Add(await ConvertToTaskDTOAsync(task));
+            }
+            return result;
+        }
+
+        private async System.Threading.Tasks.Task<Task> ConvertToTaskDTOAsync(Model.Task task)
         {
             var result = new Task()
             {
@@ -52,36 +67,39 @@ namespace ServiceDesk.Services
                 CreatedDate = DateTime.ParseExact(task.CreatedDate, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture),
                 FinishDate = DateTime.ParseExact(task.FinishDate, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture),
                 State = (State)task.State,
-                Created = new Employee()
-                {
-                    Guid = task.Created.Guid,
-                    Name = task.Created.Name,
-                    PhotoPath = _baseUrl + task.Created.PhotoPath
-                },
             };
-            if (task.Assigned != null)
+            var creator = await _employeeService.GetEmployeeById(task.CreatedId);
+            result.Created = new Employee()
             {
+                Guid = creator.guid,
+                Name = creator.name,
+                PhotoPath = creator.photoPath
+            };
+            if (task.AssignedId != null)
+            {
+                var assigned = await _employeeService.GetEmployeeById(task.AssignedId);
                 result.Assigned = new Employee()
                 {
-                    Guid = task.Assigned.Guid,
-                    Name = task.Assigned.Name,
-                    PhotoPath = _baseUrl + task.Assigned.PhotoPath
+                    Guid = assigned.guid,
+                    Name = assigned.name,
+                    PhotoPath = assigned.photoPath
                 };
             }
-            if (task.Department != null)
+            if (task.DepartmentId != null)
             {
+                var department = await _departmentService.GetDepartmentById(task.DepartmentId);
                 result.Department = new Department()
                 {
-                    Guid = task.Department.Guid,
-                    Name = task.Department.Name
+                    Guid = department.guid,
+                    Name = department.name
                 };
             }
             return result;
         }
 
-        public void EditTask(Task task)
+        public async System.Threading.Tasks.Task EditTaskAsync(Task task)
         {
-            var taskModel = _context.Tasks.Include(x => x.Assigned).Include(x => x.Created).Include(x => x.Department).FirstOrDefault(x => x.Guid == task.Guid);
+            var taskModel = _context.Tasks.FirstOrDefault(x => x.Guid == task.Guid);
             if (taskModel != null)
             {
                 if (task.Title != null)
@@ -96,16 +114,23 @@ namespace ServiceDesk.Services
                 {
                     taskModel.FinishDate = task.FinishDate.ToString("yyyyMMddTHH:mm:ssZ");
                 }
-                var assigned = task.Assigned != null ? _context.Employees.Include(x => x.Department).FirstOrDefault(x => x.Guid == task.Assigned.Guid) : null;
-                if (assigned != null)
+                if (task.Assigned != null)
                 {
-                    taskModel.Assigned = assigned;
-                    taskModel.Department = assigned.Department != null ? _context.Departments.FirstOrDefault(x => x.Id == assigned.Department.Id) : null;
+                    var assigned = await _employeeService.GetEmployeeById(task.Assigned.Guid);
+                    if (assigned != null)
+                    {
+                        taskModel.AssignedId = assigned.guid;
+                        taskModel.DepartmentId = assigned.department != null ? assigned.department.guid : null;
+                    }
                 }
-                else if (task.Department != null)
+                else if(task.Department != null)
                 {
-                    taskModel.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
-                    taskModel.Assigned = null;
+                    var department = await _departmentService.GetDepartmentById(task.Department.Guid);
+                    if (department != null)
+                    {
+                        taskModel.DepartmentId = department.guid;
+                        taskModel.AssignedId = null;
+                    }
                 }
                 ValidateAssigned(taskModel);
             }
@@ -118,21 +143,35 @@ namespace ServiceDesk.Services
                 newTask.CreatedDate = DateTime.Now.ToString("yyyyMMddTHH:mm:ssZ");
                 newTask.FinishDate = task.FinishDate.ToString("yyyyMMddTHH:mm:ssZ");
                 newTask.State = (Model.State)task.State;
-                newTask.Created = task.Created != null ? _context.Employees.FirstOrDefault(x => x.Guid == task.Created.Guid) : throw new Exception("Creator must be specified");
-                if (newTask.Created == null)
+                if (task.Created != null)
+                {
+                    var created = await _employeeService.GetEmployeeById(task.Created.Guid);
+                    if (created != null)
+                    {
+                        newTask.CreatedId = created.guid;
+                    }
+                }
+                if (newTask.CreatedId == null)
                 {
                     throw new Exception("Creator does not exist");
                 }
-                var assigned = task.Assigned != null ? _context.Employees.Include(x => x.Department).FirstOrDefault(x => x.Guid == task.Assigned.Guid) : null;
-                if (assigned != null)
+                if (task.Assigned != null)
                 {
-                    newTask.Assigned = assigned;
-                    newTask.Department = assigned.Department != null ? _context.Departments.FirstOrDefault(x => x.Id == assigned.Department.Id) : null;
+                    var assigned = await _employeeService.GetEmployeeById(task.Assigned.Guid);
+                    if (assigned != null)
+                    {
+                        newTask.AssignedId = assigned.guid;
+                        newTask.DepartmentId = assigned.department.guid;
+                    }
                 }
                 else if(task.Department != null)
                 {
-                    newTask.Department = _context.Departments.FirstOrDefault(x => x.Guid == task.Department.Guid);
-                    newTask.Assigned = null;
+                    var department = await _departmentService.GetDepartmentById(task.Department.Guid);
+                    if (department != null)
+                    {
+                        newTask.DepartmentId = department.guid;
+                        newTask.AssignedId = null;
+                    }
                 }
                 ValidateAssigned(newTask);
                 _context.Add(newTask);
@@ -142,7 +181,7 @@ namespace ServiceDesk.Services
 
         private void ValidateAssigned(Model.Task task)
         {
-            if (task.Department == null && task.Assigned == null)
+            if (task.DepartmentId == null && task.AssignedId == null)
             {
                 throw new Exception("Department or assigned must be specified");
             }

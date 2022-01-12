@@ -18,8 +18,8 @@ namespace ServiceDesk.Model
         public string CreatedDate { get; set; }
         public string FinishDate { get; set; }
         public State State { get; set; }
-        public Employee Assigned { get; set; }
-        public Employee Created { get; set; }
-        public Department Department { get; set; }
+        public string AssignedId { get; set; }
+        public string CreatedId { get; set; }
+        public string DepartmentId { get; set; }
     }
 }

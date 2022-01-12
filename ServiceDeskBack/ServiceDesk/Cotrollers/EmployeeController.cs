@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.DTO.Employee;
 using System;
+using System.Threading.Tasks;
 
 namespace ServiceDesk.Cotrollers
 {
@@ -15,17 +16,17 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("all")]
-        public IActionResult GetEmployees()
+        public async Task<IActionResult> GetEmployeesAsync()
         {
-            return Ok(_employeeService.GetEmployees());
+            return Ok(await _employeeService.GetEmployees());
         }
 
         [HttpGet("department/{departmentId}")]
-        public IActionResult GetEmployeesByDepartmentId(string departmentId)
+        public async Task<IActionResult> GetEmployeesByDepartmentIdAsync(string departmentId)
         {
             try
             {
-                return Ok(_employeeService.GetEmployeesByDepartmentId(departmentId));
+                return Ok(await _employeeService.GetEmployeesByDepartmentId(departmentId));
             }
             catch (Exception e)
             {
@@ -34,11 +35,11 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetEmployeeById(string id)
+        public async Task<IActionResult> GetEmployeeByIdAsync(string id)
         {
             try
             {
-                return Ok(_employeeService.GetEmployeeById(id));
+                return Ok(await _employeeService.GetEmployeeById(id));
             }
             catch (Exception e)
             {
@@ -47,30 +48,11 @@ namespace ServiceDesk.Cotrollers
         }
 
         [HttpPost("auth")]
-        public IActionResult GetEmployee(Authorization auth)
+        public async Task<IActionResult> GetEmployeeAsync(Authorization auth)
         {
-            try
-            {
-                return Ok(new Result
-                {
-                    ErrorCode = 0,
-                    Guid = _employeeService.GetEmployee(auth)
-                });
-            }
-            catch (Exception)
-            {
-                return Ok(new Result
-                {
-                    ErrorCode = 1,
-                    Guid = ""
-                });
-            }
+            return Ok(await _employeeService.GetEmployee(auth));
         }
     }
 
-    public class Result
-    {
-        public int ErrorCode { get; set; }
-        public string Guid { get; set; }
-    }
+
 }

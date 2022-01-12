@@ -2,21 +2,26 @@
 {
     public class Authorization
     {
-        public string Login { get; set; }
-        public string Password { get; set; }
+        public string login { get; set; }
+        public string password { get; set; }
+    }
+    public class AuthResult
+    {
+        public int errorCode { get; set; }
+        public string guid { get; set; }
     }
 
     public class Department
     {
-        public string Guid { get; set; }
-        public string Name { get; set; }
+        public string guid { get; set; }
+        public string name { get; set; }
     }
 
     public class Employee
     {
-        public string Guid { get; set; }
-        public string Name { get; set; }
-        public Department Department { get; set; }
-        public string PhotoPath { get; set; }
+        public string guid { get; set; }
+        public string name { get; set; }
+        public Department department { get; set; }
+        public string photoPath { get; set; }
     }
 }

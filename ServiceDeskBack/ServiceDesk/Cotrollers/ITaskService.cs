@@ -5,12 +5,12 @@ namespace ServiceDesk.Cotrollers
 {
     public interface ITaskService
     {
-        public List<Task> GetTasks();
-        public Task GetTaskById(string id);
-        public List<Task> GetTasksByAssignedId(string assignedId);
-        public List<Task> GetTasksByCreatedId(string createdId);
-        public List<Task> GetTasksByDepartmentId(string departmentId);
-        public void EditTask(Task task);
+        public System.Threading.Tasks.Task<List<Task>> GetTasksAsync();
+        public System.Threading.Tasks.Task<Task> GetTaskByIdAsync(string id);
+        public System.Threading.Tasks.Task<List<Task>> GetTasksByAssignedIdAsync(string assignedId);
+        public System.Threading.Tasks.Task<List<Task>> GetTasksByCreatedIdAsync(string createdId);
+        public System.Threading.Tasks.Task<List<Task>> GetTasksByDepartmentIdAsync(string departmentId);
+        public System.Threading.Tasks.Task EditTaskAsync(Task task);
         public void EditTaskState(TaskState taskState);
     }
 }
