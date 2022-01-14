@@ -26,7 +26,7 @@ namespace ServiceDesk.Services
 
         public async System.Threading.Tasks.Task<Task> GetTaskByIdAsync(string id)
         {
-            var task = _context.Tasks.FirstOrDefault(x => x.Guid == id);
+            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
             if (task == null)
             {
                 throw new Exception("Unknown task id");
@@ -61,7 +61,7 @@ namespace ServiceDesk.Services
         {
             var result = new Task()
             {
-                Guid = task.Guid,
+                Guid = task.Id,
                 Title = task.Title,
                 Description = task.Description,
                 CreatedDate = DateTime.ParseExact(task.CreatedDate, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture),
@@ -99,7 +99,7 @@ namespace ServiceDesk.Services
 
         public async System.Threading.Tasks.Task EditTaskAsync(Task task)
         {
-            var taskModel = _context.Tasks.FirstOrDefault(x => x.Guid == task.Guid);
+            var taskModel = _context.Tasks.FirstOrDefault(x => x.Id == task.Guid);
             if (taskModel != null)
             {
                 if (task.Title != null)
@@ -137,7 +137,7 @@ namespace ServiceDesk.Services
             else
             {
                 var newTask = new Model.Task();
-                newTask.Guid = Guid.NewGuid().ToString();
+                newTask.Id = Guid.NewGuid().ToString();
                 newTask.Title = task.Title != null ? task.Title : "";
                 newTask.Description = task.Description != null ? task.Description : "";
                 newTask.CreatedDate = DateTime.Now.ToString("yyyyMMddTHH:mm:ssZ");
@@ -189,7 +189,7 @@ namespace ServiceDesk.Services
 
         public void EditTaskState(TaskState taskState)
         {
-            var taskModel = _context.Tasks.FirstOrDefault(x => x.Guid == taskState.Guid);
+            var taskModel = _context.Tasks.FirstOrDefault(x => x.Id == taskState.Guid);
             if ((Model.State)taskState.State > Model.State.Closed || (Model.State)taskState.State < Model.State.Open)
             {
                 throw new Exception($"Invalid state");

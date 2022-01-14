@@ -10,14 +10,21 @@ namespace ServiceDesk.Cotrollers
     public class TaskController : Controller
     {
         private readonly ITaskService _taskService;
-        public TaskController(ITaskService taskService)
+        private readonly Token _token;
+        public TaskController(ITaskService taskService, IEmployeeService employeeService)
         {
             _taskService = taskService;
+            _token = new Token(employeeService);
         }
 
         [HttpGet("all")]
         public async System.Threading.Tasks.Task<IActionResult> GetTasksAsync()
         {
+            if (!Request.Headers.ContainsKey("Token"))
+            {
+                return Unauthorized();
+            }
+            await _token.CheckTokenAsync(Request.Headers["Token"]);
             return Ok(await _taskService.GetTasksAsync());
         }
 
@@ -26,6 +33,11 @@ namespace ServiceDesk.Cotrollers
         {
             try
             {
+                if (!Request.Headers.ContainsKey("Token"))
+                {
+                    return Unauthorized();
+                }
+                await _token.CheckTokenAsync(Request.Headers["Token"]);
                 var task = await _taskService.GetTaskByIdAsync(id);
                 return Ok(task);
             }
@@ -40,6 +52,11 @@ namespace ServiceDesk.Cotrollers
         {
             try
             {
+                if (!Request.Headers.ContainsKey("Token"))
+                {
+                    return Unauthorized();
+                }
+                await _token.CheckTokenAsync(Request.Headers["Token"]);
                 var tasks = await _taskService.GetTasksByAssignedIdAsync(assignedId);
                 return Ok(tasks);
             }
@@ -54,6 +71,11 @@ namespace ServiceDesk.Cotrollers
         {
             try
             {
+                if (!Request.Headers.ContainsKey("Token"))
+                {
+                    return Unauthorized();
+                }
+                await _token.CheckTokenAsync(Request.Headers["Token"]);
                 var tasks = await _taskService.GetTasksByCreatedIdAsync(createdId);
                 return Ok(tasks);
             }
@@ -68,6 +90,11 @@ namespace ServiceDesk.Cotrollers
         {
             try
             {
+                if (!Request.Headers.ContainsKey("Token"))
+                {
+                    return Unauthorized();
+                }
+                await _token.CheckTokenAsync(Request.Headers["Token"]);
                 var tasks = await _taskService.GetTasksByDepartmentIdAsync(departmentId);
                 return Ok(tasks);
             }
@@ -82,6 +109,11 @@ namespace ServiceDesk.Cotrollers
         {
             try
             {
+                if (!Request.Headers.ContainsKey("Token"))
+                {
+                    return Unauthorized();
+                }
+                await _token.CheckTokenAsync(Request.Headers["Token"]);
                 await _taskService.EditTaskAsync(task);
                 return Ok(new TaskResult
                 {
@@ -99,10 +131,15 @@ namespace ServiceDesk.Cotrollers
 
 
         [HttpPost("state")]
-        public IActionResult EditTaskState(TaskState taskState)
+        public async System.Threading.Tasks.Task<IActionResult> EditTaskStateAsync(TaskState taskState)
         {
             try
             {
+                if (!Request.Headers.ContainsKey("Token"))
+                {
+                    return Unauthorized();
+                }
+                await _token.CheckTokenAsync(Request.Headers["Token"]);
                 _taskService.EditTaskState(taskState);
                 return Ok(new TaskResult
                 {
