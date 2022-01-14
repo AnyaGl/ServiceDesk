@@ -7,9 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using ServiceDesk.Services;
 using ServiceDesk.Cotrollers;
-using ServiceDesk.Filters;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace ServiceDesk
 {
